@@ -1,0 +1,4 @@
+#+TITLE: Repository for if701 related activities
+#+AUTHOR: Gabriel Barbosa Gaspar Veloso
+
+This repository contains files and annotations related to IF701 (Functional Programming).
