@@ -76,3 +76,29 @@ crack string =
   let len = length string
       chiSquareds = 
 -}
+
+
+-- Tautology verifier
+
+-- Algebraic data type
+
+data Prop = Imply Prop Prop
+  | BiImply Prop Prop
+  | And Prop Prop
+  | Or Prop Prop
+  | Negation Prop
+  | Var String
+  | True
+  | False
+
+type Subst = [(String, Prop)]
+
+-- Evaluation of propositions
+eval :: Subst -> Prop -> Prop
+eval subst (Var string) = substValue subst (Var string)
+
+-- Find value of variable in Subst
+substValue :: Subst -> Prop -> Prop
+substValue ((storedName, value):vs) (Var name)
+  | storedName == name = value
+  | otherwise = substValue vs (Var name)
