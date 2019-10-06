@@ -88,26 +88,30 @@ data Prop = Imply Prop Prop
   | Or Prop Prop
   | Negation Prop
   | Var String
-  | True
-  | False
+  | T
+  | F
 
 type Subst = [(String, Prop)]
 
 -- Evaluation of propositions
 eval :: Subst -> Prop -> Prop
-eval _ True = True
-eval _ False = False
-eval _ (Imply True False) = False
-eval _ (Imply _ _) = True
-eval _ (BiImply True True) = True
-eval _ (BiImply False False) = True
-eval _ (BiImply _ _) = False
-eval _ (And True True) = True
-eval _ (And _ _) = False
-eval _ (Or False False) = False
-eval _ (Or _ _) = True
-eval _ (Negation True) = False
-eval _ (Negation False) = True
+eval _ T = T
+eval _ F = F
+eval _ (Imply T F) = F
+eval _ (Imply F _) = T
+eval _ (Imply T _) = T
+eval _ (BiImply T T) = T
+eval _ (BiImply F F) = T
+eval _ (BiImply _ F) = F
+eval _ (BiImply F _) = F
+eval _ (And T T) = T
+eval _ (And F _) = F
+eval _ (And _ F) = F
+eval _ (Or F F) = F
+eval _ (Or T _) = T
+eval _ (Or _ T) = T
+eval _ (Negation T) = F
+eval _ (Negation F) = T
 eval subst (Imply first second) =
   eval subst (Imply (eval subst first) (eval subst second))
 eval subst (BiImply first second) =
@@ -134,3 +138,10 @@ vars (BiImply first second) = (vars first) ++ (vars second)
 vars (And first second) = (vars first) ++ (vars second)
 vars (Or first second) = (vars first) ++ (vars second)
 vars (Negation prop) = vars prop
+
+bools :: Int -> [[Bool]]
+bools 0 = [[]]
+bools n =
+  [True:list | list <- bools (n - 1)]
+  ++
+  [False:list | list <- bools (n - 1)]
