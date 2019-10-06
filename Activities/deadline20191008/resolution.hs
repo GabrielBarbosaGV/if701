@@ -95,7 +95,31 @@ type Subst = [(String, Prop)]
 
 -- Evaluation of propositions
 eval :: Subst -> Prop -> Prop
-eval subst (Var string) = substValue subst (Var string)
+eval _ True = True
+eval _ False = False
+eval _ (Imply True False) = False
+eval _ (Imply _ _) = True
+eval _ (BiImply True True) = True
+eval _ (BiImply False False) = True
+eval _ (BiImply _ _) = False
+eval _ (And True True) = True
+eval _ (And _ _) = False
+eval _ (Or False False) = False
+eval _ (Or _ _) = True
+eval _ (Negation True) = False
+eval _ (Negation False) = True
+eval subst (Imply first second) =
+  eval subst (Imply (eval subst first) (eval subst second))
+eval subst (BiImply first second) =
+  eval subst (BiImply (eval subst first) (eval subst second))
+eval subst (And first second) =
+  eval subst (And (eval subst first) (eval subst second))
+eval subst (Or first second) =
+  eval subst (Or (eval subst first) (eval subst second))
+eval subst (Negation prop) =
+  eval subst (Negation (eval subst prop))
+eval subst (Var string) =
+  substValue subst (Var string)
 
 -- Find value of variable in Subst
 substValue :: Subst -> Prop -> Prop
