@@ -172,3 +172,54 @@ newtonSqroot value previous current =
   if ((abs (current - previous)) < minimalDistance)
   then current
   else (newtonSqroot value current ((current + value / current) / 2))
+
+
+-- Set data structure
+
+-- Binary search tree
+data Tree a = Leaf a | Node a (Tree a) (Tree a) | Nil
+
+insertInTree :: (Ord a) => Tree a -> a -> Tree a
+insertInTree Nil toInsert = (Leaf toInsert)
+insertInTree (Leaf value) toInsert
+  | toInsert <= value = (Node value (Leaf value) Nil)
+  | otherwise = (Node value Nil (Leaf value))
+insertInTree (Node value left right) toInsert
+  | toInsert <= value = (Node value (insertInTree left toInsert) right)
+  | otherwise = (Node value left (insertInTree right toInsert))
+
+mergeTrees :: (Ord a) => Tree a -> Tree a -> Tree a
+mergeTrees Nil Nil = Nil
+mergeTrees Nil right = right
+mergeTrees left Nil = left
+mergeTrees (Leaf first) (Leaf second)
+  | first <= second = (Node second (Leaf first) Nil)
+  | otherwise = (Node first (Leaf second) Nil)
+mergeTrees (Leaf first) (Node second left right)
+  | first <= second = (Node second (mergeTrees (Leaf first) left) right)
+  | otherwise = (Node second left (mergeTrees (Leaf first) right))
+mergeTrees node@(Node first left right) leaf@(Leaf second) =
+  mergeTrees leaf node
+mergeTrees
+  first@(Node firstValue firstLeft firstRight)
+  second@(Node secondValue secondLeft secondRight)
+  | firstValue <= secondValue = (Node secondValue (mergeTrees first secondLeft) secondRight)
+  | otherwise = (Node secondValue secondLeft (mergeTrees first secondRight))
+
+removeFromTree :: (Ord a) => Tree a -> a -> Tree a
+removeFromTree Nil _ = Nil
+removeFromTree (Leaf value) toRemove
+  | value == toRemove = Nil
+  | otherwise = (Leaf value)
+removeFromTree (Node value left right) toRemove
+  | value == toRemove = (mergeTrees left right)
+  | value < toRemove = (Node value left (removeFromTree right toRemove))
+  | value > toRemove = (Node value (removeFromTree left toRemove) right)
+
+isInTree :: (Ord a) => Tree a -> a -> Bool
+isInTree Nil _ = False
+isInTree (Leaf value) toVerify = value == toVerify
+isInTree (Node value left right) toVerify
+  | value == toVerify = True
+  | value <= toVerify = isInTree right toVerify
+  | otherwise = isInTree left toVerify
