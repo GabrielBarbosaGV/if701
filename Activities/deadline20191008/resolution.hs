@@ -126,3 +126,11 @@ substValue :: Subst -> Prop -> Prop
 substValue ((storedName, value):vs) (Var name)
   | storedName == name = value
   | otherwise = substValue vs (Var name)
+
+vars :: Prop -> [String]
+vars (Var string) = [string]
+vars (Imply first second) = (vars first) ++ (vars second)
+vars (BiImply first second) = (vars first) ++ (vars second)
+vars (And first second) = (vars first) ++ (vars second)
+vars (Or first second) = (vars first) ++ (vars second)
+vars (Negation prop) = vars prop
