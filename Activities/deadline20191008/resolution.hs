@@ -89,7 +89,7 @@ data Prop = Imply Prop Prop
   | Negation Prop
   | Var String
   | T
-  | F
+  | F deriving (Show, Eq)
 
 type Subst = [(String, Prop)]
 
@@ -138,10 +138,22 @@ vars (BiImply first second) = (vars first) ++ (vars second)
 vars (And first second) = (vars first) ++ (vars second)
 vars (Or first second) = (vars first) ++ (vars second)
 vars (Negation prop) = vars prop
+vars _ = []
 
-bools :: Int -> [[Bool]]
+bools :: Int -> [[Prop]]
 bools 0 = [[]]
 bools n =
-  [True:list | list <- bools (n - 1)]
+  [T:list | list <- bools (n - 1)]
   ++
-  [False:list | list <- bools (n - 1)]
+  [F:list | list <- bools (n - 1)]
+
+substs :: Prop -> [Subst]
+substs prop = map (zip (nub varNames)) (bools (length varNames))
+  where varNames = vars prop
+
+isTaut :: Prop -> Bool
+isTaut prop =
+  let substitutions = substs prop
+      evaluations = map (\s -> eval s prop) substitutions
+      allTrue = (not (elem F evaluations))
+      in allTrue
