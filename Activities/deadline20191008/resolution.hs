@@ -157,3 +157,18 @@ isTaut prop =
       evaluations = map (\s -> eval s prop) substitutions
       allTrue = (not (elem F evaluations))
       in allTrue
+
+
+-- Newton's Method
+-- Square root
+minimalDistance :: Double
+minimalDistance = 0.00001
+
+sqroot :: Double -> Double
+sqroot value = newtonSqroot value 1 ((1 + 1 / value) / 2)
+
+newtonSqroot :: Double -> Double -> Double -> Double
+newtonSqroot value previous current =
+  if ((abs (current - previous)) < minimalDistance)
+  then current
+  else (newtonSqroot value current ((current + value / current) / 2))
