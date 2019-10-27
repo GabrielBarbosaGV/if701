@@ -278,7 +278,7 @@ removeFromSet (Set tree) value = Set $ removeFromTree tree value
 
 setIsContainedIn :: (Ord a) => Set a -> Set a -> Bool
 setIsContainedIn (Set treeA) setB =
-  foldl' (&&) (map (isInSet setB) (treeToListInOrder treeA))
+  foldl' (&&) True (map (isInSet setB) (treeToListInOrder treeA))
 
 returnCurlyFromSquareBracket :: Char -> Char
 returnCurlyFromSquareBracket c
@@ -319,12 +319,12 @@ instance (Ord a, Arbitrary a) => Arbitrary (Tree a) where
   arbitrary = sized arbitraryTree
 
 
--- Property (number of leaves in tree) <= ((number of internal nodes) + 1)
+-- Property: (number of leaves in tree) <= ((number of internal nodes) + 1)
 propertyNumberNodesLeaves :: Tree a -> Bool
 propertyNumberNodesLeaves tree =
   countLeavesInTree tree <= (countInternalNodesInTree tree + 1)
 
--- Property (number of internal nodes in tree) <= ((2^(height of tree)) - 1)
+-- Property: (number of internal nodes in tree) <= ((2^(height of tree)) - 1)
 propertyHeightNumberOfNodes :: Tree a -> Bool
 propertyHeightNumberOfNodes tree =
   countInternalNodesInTree tree <= ((2^(getHeightForTree tree + 1)) - 1)
@@ -332,13 +332,24 @@ propertyHeightNumberOfNodes tree =
 
 -- Set generator
 arbitrarySet :: (Ord a, Arbitrary a) => Int -> Gen (Set a)
-arbitrarySet n = liftM Set (arbitraryTree n)
+arbitrarySet 0 = return newSet
+arbitrarySet n = 
+  do smallerSet <- (arbitrarySet (n - 1))
+     element <- arbitrary
+     return (putInSet smallerSet element)
 
 
 instance (Ord a, Arbitrary a) => Arbitrary (Set a) where
   arbitrary = sized arbitrarySet
 
 
-instance (Eq a) => Eq (Set a) where
+instance (Eq a, Ord a) => Eq (Set a) where
   (Set treeA) == (Set treeB) =
     (treeToListInOrder treeA) == (treeToListInOrder treeB)
+
+
+-- Property: if Set A is contained in Set B and vice versa, Set a == Set B
+propertyMutualContainmentEquality :: (Ord a, Eq a) => Set a -> Set a -> Property
+propertyMutualContainmentEquality setA setB =
+  (setIsContainedIn setA setB) && (setIsContainedIn setB setA) ==>
+  (setA == setB)
