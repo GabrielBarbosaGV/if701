@@ -363,3 +363,9 @@ propertyMutualContainmentEquality :: (Ord a, Eq a) => Set a -> Set a -> Property
 propertyMutualContainmentEquality setA setB =
   (setIsContainedIn setA setB) && (setIsContainedIn setB setA) ==>
   (setA == setB)
+
+-- Property: if set is contained in other two sets, it is also contained in their intersection
+propertyContainedInBothThenContainedInIntersection :: (Ord a) => Set a -> Set a -> Set a -> Property
+propertyContainedInBothThenContainedInIntersection setA setB setC =
+  (setIsContainedIn setA setB) && (setIsContainedIn setA setC) ==>
+  (setIsContainedIn setA (setIntersection setB setC))
