@@ -280,6 +280,10 @@ setIsContainedIn :: (Ord a) => Set a -> Set a -> Bool
 setIsContainedIn (Set treeA) setB =
   foldl' (&&) True (map (isInSet setB) (treeToListInOrder treeA))
 
+setFromList :: (Ord a) => [a] -> Set a
+setFromList [] = newSet
+setFromList (x:xs) = putInSet (setFromList xs) x
+
 returnCurlyFromSquareBracket :: Char -> Char
 returnCurlyFromSquareBracket c
   | c == '[' = '{'
