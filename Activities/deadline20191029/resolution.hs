@@ -276,6 +276,10 @@ putInSet (Set tree) value = Set $ insertIfNotInTree tree value
 removeFromSet :: (Ord a) => Set a -> a -> Set a
 removeFromSet (Set tree) value = Set $ removeFromTree tree value
 
+setIsContainedIn :: (Ord a) => Set a -> Set a -> Bool
+setIsContainedIn (Set treeA) setB =
+  foldl' (&&) (map (isInSet setB) (treeToListInOrder treeA))
+
 returnCurlyFromSquareBracket :: Char -> Char
 returnCurlyFromSquareBracket c
   | c == '[' = '{'
