@@ -259,6 +259,8 @@ countLeavesInTree _ = 0
 getHeightForTree :: Tree a -> Int
 getHeightForTree (Node value left right) =
   1 + (max (getHeightForTree left) (getHeightForTree right))
+getHeightForTree (Leaf value) = 1
+getHeightForTree _ = 0
 
 data Set a = Set (Tree a)
 
@@ -316,3 +318,8 @@ instance (Ord a, Arbitrary a) => Arbitrary (Tree a) where
 propertyNumberNodesLeaves :: Tree a -> Bool
 propertyNumberNodesLeaves tree =
   countLeavesInTree tree <= (countInternalNodesInTree tree + 1)
+
+-- Property (number of internal nodes in tree) <= ((2^(height of tree)) - 1)
+propertyHeightNumberOfNodes :: Tree a -> Bool
+propertyHeightNumberOfNodes tree =
+  countInternalNodesInTree tree <= ((2^(getHeightForTree tree + 1)) - 1)
