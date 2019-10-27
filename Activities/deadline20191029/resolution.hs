@@ -280,6 +280,7 @@ replaceSquareWithCurlyBrackets :: String -> String
 replaceSquareWithCurlyBrackets str =
   map returnCurlyFromSquareBracket str
 
+
 instance (Ord a, Show a) => Show (Set a) where
   show (Set tree) =
     let treeListInOrder = treeToListInOrder tree
@@ -287,6 +288,16 @@ instance (Ord a, Show a) => Show (Set a) where
     in replaceSquareWithCurlyBrackets listString
 
 
+instance (Show a) => Show (Tree a) where
+  show (Node value left right) =
+    "(" ++ show value ++ ")" ++ " " ++ show left ++ " " ++ show right
+  show (Leaf value) = "(" ++ show value ++ ")"
+  show Nil = "()"
+
+  
+-- Second activity
+
+-- Tree generator
 arbitraryTree :: (Ord a, Arbitrary a) => Int -> Gen (Tree a)
 arbitraryTree 0 = liftM Leaf arbitrary
 arbitraryTree n = frequency
@@ -295,3 +306,9 @@ arbitraryTree n = frequency
 
 instance (Ord a, Arbitrary a) => Arbitrary (Tree a) where
   arbitrary = sized arbitraryTree
+
+
+-- Property (number of leaves in tree) <= ((number of internal nodes) + 1)
+propertyNumberNodesLeaves :: Tree a -> Bool
+propertyNumberNodesLeaves tree =
+  countLeavesInTree tree <= (countInternalNodesInTree tree + 1)
