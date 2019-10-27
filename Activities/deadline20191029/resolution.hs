@@ -310,6 +310,7 @@ arbitraryTree n = frequency
   [ (1, liftM Leaf arbitrary),
     (4, liftM3 Node arbitrary (arbitraryTree (div n 2)) (arbitraryTree (div n 2))) ]
 
+
 instance (Ord a, Arbitrary a) => Arbitrary (Tree a) where
   arbitrary = sized arbitraryTree
 
@@ -323,3 +324,12 @@ propertyNumberNodesLeaves tree =
 propertyHeightNumberOfNodes :: Tree a -> Bool
 propertyHeightNumberOfNodes tree =
   countInternalNodesInTree tree <= ((2^(getHeightForTree tree + 1)) - 1)
+
+
+-- Set generator
+arbitrarySet :: (Ord a, Arbitrary a) => Int -> Gen (Set a)
+arbitrarySet n = liftM Set (arbitraryTree n)
+
+
+instance (Ord a, Arbitrary a) => Arbitrary (Set a) where
+  arbitrary = sized arbitrarySet
