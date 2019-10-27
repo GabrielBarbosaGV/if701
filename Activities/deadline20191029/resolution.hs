@@ -284,6 +284,12 @@ setFromList :: (Ord a) => [a] -> Set a
 setFromList [] = newSet
 setFromList (x:xs) = putInSet (setFromList xs) x
 
+setIntersection :: (Ord a) => Set a -> Set a -> Set a
+setIntersection (Set treeA) setB =
+  let setAElementList = treeToListInOrder treeA
+      intersectionElementList = filter (isInSet setB) setAElementList
+  in setFromList intersectionElementList
+
 returnCurlyFromSquareBracket :: Char -> Char
 returnCurlyFromSquareBracket c
   | c == '[' = '{'
