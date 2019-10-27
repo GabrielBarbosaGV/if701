@@ -250,6 +250,12 @@ countInternalNodesInTree (Node value left right) =
   1 + (countInternalNodesInTree left) + (countInternalNodesInTree right)
 countInternalNodesInTree _ = 0
 
+countLeavesInTree :: Tree a -> Int
+countLeavesInTree (Node value left right) =
+  countLeavesInTree left + countLeavesInTree right
+countLeavesInTree (Leaf value) = 1
+countLeavesInTree _ = 0
+
 data Set a = Set (Tree a)
 
 newSet :: (Ord a) => Set a
