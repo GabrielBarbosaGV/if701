@@ -333,3 +333,8 @@ arbitrarySet n = liftM Set (arbitraryTree n)
 
 instance (Ord a, Arbitrary a) => Arbitrary (Set a) where
   arbitrary = sized arbitrarySet
+
+
+instance (Eq a) => Eq (Set a) where
+  (Set treeA) == (Set treeB) =
+    (treeToListInOrder treeA) == (treeToListInOrder treeB)
