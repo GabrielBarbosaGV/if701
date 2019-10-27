@@ -1,7 +1,9 @@
 -- First Activity
 
+import Control.Monad
 import Data.Char
 import Data.List
+import Test.QuickCheck
 
 
 -- Caesar's Cipher
@@ -274,3 +276,13 @@ instance (Ord a, Show a) => Show (Set a) where
     let treeListInOrder = treeToListInOrder tree
         listString = show treeListInOrder
     in replaceSquareWithCurlyBrackets listString
+
+
+arbitraryTree :: (Ord a, Arbitrary a) => Int -> Gen (Tree a)
+arbitraryTree 0 = liftM Leaf arbitrary
+arbitraryTree n = frequency
+  [ (1, liftM Leaf arbitrary),
+    (4, liftM3 Node arbitrary (arbitraryTree (div n 2)) (arbitraryTree (div n 2))) ]
+
+instance (Ord a, Arbitrary a) => Arbitrary (Tree a) where
+  arbitrary = sized arbitraryTree
