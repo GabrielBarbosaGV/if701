@@ -239,13 +239,16 @@ isInTree (Node value left right) toVerify
   | value <= toVerify = isInTree right toVerify
   | otherwise = isInTree left toVerify
 
-
 treeToListInOrder :: (Ord a) => Tree a -> [a]
 treeToListInOrder Nil = []
 treeToListInOrder (Leaf value) = [value]
 treeToListInOrder (Node value left right) =
   (treeToListInOrder left) ++ [value] ++ (treeToListInOrder right)
 
+countInternalNodesInTree :: Tree a -> Int
+countInternalNodesInTree (Node value left right) =
+  1 + (countInternalNodesInTree left) + (countInternalNodesInTree right)
+countInternalNodesInTree _ = 0
 
 data Set a = Set (Tree a)
 
