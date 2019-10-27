@@ -256,6 +256,10 @@ countLeavesInTree (Node value left right) =
 countLeavesInTree (Leaf value) = 1
 countLeavesInTree _ = 0
 
+getHeightForTree :: Tree a -> Int
+getHeightForTree (Node value left right) =
+  1 + (max (getHeightForTree left) (getHeightForTree right))
+
 data Set a = Set (Tree a)
 
 newSet :: (Ord a) => Set a
