@@ -369,3 +369,51 @@ propertyContainedInBothThenContainedInIntersection :: (Ord a) => Set a -> Set a 
 propertyContainedInBothThenContainedInIntersection setA setB setC =
   (setIsContainedIn setA setB) && (setIsContainedIn setA setC) ==>
   (setIsContainedIn setA (setIntersection setB setC))
+
+-- Fourth Question
+{-
+data Expr a = Var a | Val Int | Add (Expr a) (Expr a)
+            deriving (Show)
+
+Definimos fmap sobre Expr da seguinte forma:
+fmap f (Var a) = (Var a)
+fmap f (Val value) = (Val (f value))
+fmap f (Add (Expr a) (Expr a)) = (Add (fmap f (Expr a)) (fmap f (Expr b)))
+
+No caso da variável, retornamos sempre a própria, pois deve continuar
+referenciando o mesmo valor
+
+No caso do valor, simplesmente aplicamos a função ao valor
+
+E no caso da adição, aplicamos a função a cada um dos valores
+
+Propriedades de functor:
+fmap id a = id a
+fmap (f . g) = fmap f . fmap g
+
+
+Primeira propriedade de functor para Expr:
+fmap id (Var a) = (Var a)
+id (Var a) = (Var a)
+
+fmap id (Val value) = (Val (id value)) = (Val value)
+id (Val value) = (Val value)
+
+fmap id (Add (Expr a) (Expr a)) = (Add (fmap id (Expr a)) (fmap id (Expr a)))
+Sabemos que para os outros dois casos, fmap id Expr a = id Expr a, então
+esse caso é verdade também
+
+Segunda propriedade de functor:
+fmap (f . g) (Var a) = (Var a)
+fmap f . fmap g (Var a) = fmap f (Var a) = (Var a)
+
+fmap (f . g) (Val value) = (Val (f . g value))
+fmap f . fmap g (Val value) = fmap f (Val (g value)) = (Val (f (g value))) = (Val (f . g value))
+
+fmap (f . g) (Add (Expr a) (Expr a)) = (Add (fmap (f . g) (Expr a)) (fmap (f . g) (Expr a)))
+fmap f . fmap g (Add (Expr a) (Expr a)) =
+fmap f (Add (fmap g (Expr a)) (fmap g (Expr a))) =
+(Add (fmap f (fmap g (Expr a))) (fmap f (fmap g (Expr a)))) =
+(Add (fmap f . fmap g (Expr a)) (fmap f . fmap g (Expr a)))
+Sabemos que a regra se aplica aos outros dois casos de Expr, então
+esse caso é verdade também
